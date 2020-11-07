@@ -1,0 +1,47 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Nov  7 11:00:33 2020
+
+@author: Giovanni Guarnieri Soares
+"""
+
+
+import igraph as gr
+import matplotlib.pyplot as plt
+import random
+
+random.seed(8666)
+G = [[gr.Graph.Famous("zachary"), gr.Graph.Watts_Strogatz(1, 34, 2, 0.8)], 
+      ["Karate", "Watts-Strogatz"]]
+
+for k in range(len(G)):
+    y = []
+    summing = [0]
+    start = 0
+    finish = 1
+    steps = 100
+    qtd = 10000
+    x = range(G[0][k].shortest_paths(start, finish)[0][0], steps)
+    for i in x:
+        freq = []
+        for j in range(qtd):
+            freq.append(G[0][k].random_walk(start, i)[-1])
+        y.append(freq.count(finish)/qtd)
+        summing.append(summing[-1] + freq.count(finish)/((len(summing)+1)*qtd))
+    
+    summing.pop(0)
+    plt.figure()
+    plt.title(f"Porcentagem das vezes que a caminhada\n aleatória leva ao destino\n{G[1][k]}")
+    plt.xlabel("Quantidade de passos")
+    plt.ylabel("Frequência")
+    plt.plot(x, y)
+    plt.show()
+    
+    plt.figure()
+    plt.title(f"Chance que a caminhada aleatória tem de chegar no\n destino acumulando os passos\n{G[1][k]}")
+    plt.xlabel("Quantidade de passos")
+    plt.ylabel("Chance de aparecer na somatória")
+    plt.plot(x, summing)
+    plt.show()
+
+
